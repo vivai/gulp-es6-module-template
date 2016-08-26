@@ -11,6 +11,7 @@ const gulp = require("gulp"),
       del = require("del"),
       karma = require("karma"),
       rename = require("gulp-rename"),
+      path = require("path"),
       util = require("gulp-util");
 
 /* eslint-disable no-unused-vars */
@@ -26,18 +27,24 @@ const babelify = require("babelify"),
 //------------------------------------------------------------------------------
 // config
 //
-const src = {
-        "main": "src/main.js",
-        "js": "src/**/*.js",
-        "test": "test/**/*.js"
+const allJs = "**/*.js",
+      mainFileName = "main.js",
+      exclude = {
+        nodeModules: "!node_modules/**",
+        dist: "!dist/**"
       },
-      target = "dist/",
+      src = {
+        "main": path.join("src", mainFileName),
+        "js": path.join("src", allJs),
+        "test": path.join("test", allJs)
+      },
+      dist = "dist/",
       coverage = "coverage/",
       options = {
         // babel: see .babelrc
         flow: {},
         karma: {
-          configFile: __dirname + "/karma.conf.js"
+          configFile: path.join(__dirname, "karma.conf.js")
         }
       };
 
@@ -61,13 +68,7 @@ function isDevelopmentMode() {
 //
 gulp.task("check:eslint", checkEslint);
 function checkEslint() {
-  var streamSrc = [src.js];
-
-  if (isDevelopmentMode()) {
-    streamSrc.push(src.test);
-  }
-
-  var stream =  gulp.src(streamSrc)
+  var stream =  gulp.src([allJs, exclude.nodeModules, exclude.dist])
     .pipe(eslint({
       rules: {
         "no-console": isDevelopmentMode() ? "off" : "error"
@@ -99,14 +100,14 @@ function buildJs() {
     .pipe(babel())
     // .pipe(sourcemaps.write(".")) // external soure map
     .pipe(sourcemaps.write()) // internal soure map
-    .pipe(gulp.dest(target));
+    .pipe(gulp.dest(dist));
 }
 
 gulp.task("copy:flow", copyFlow);
 function copyFlow() {
   return gulp.src(src.js)
     .pipe(rename({"extname": ".js.flow"}))
-    .pipe(gulp.dest(target));
+    .pipe(gulp.dest(dist));
 }
 
 //------------------------------------------------------------------------------
@@ -137,7 +138,7 @@ function changeMode(newMode) {
 //
 gulp.task("clean", clean);
 function clean() {
-  return del([target, coverage]);
+  return del([dist, coverage]);
 }
 
 gulp.task("build",
