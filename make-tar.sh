@@ -1,6 +1,7 @@
 #!/bin/sh
 tar --exclude node_modules \
     --exclude dist \
+    --exclude .git \
     --exclude coverage \
     --exclude .DS_Store \
     --exclude make-tar.sh \
