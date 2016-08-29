@@ -1,15 +1,15 @@
 //@flow
-"use strict";
+'use strict';
 
-import {test} from "tape";
-import {hello} from "../src/main";
+import {test} from 'tape';
+import {hello} from '../src/main';
 
-test("Test the module", function(t) {
+test('Test the module', function(t) {
 
-  t.ok(typeof hello === "function",
-      "Function hello is imported.");
+  t.ok(typeof hello === 'function',
+      'Function hello is imported.');
 
-  t.equal(hello("world"), "Hello, world!", "Hello, World!");
+  t.equal(hello('world'), 'Hello, world!', 'Hello, World!');
 
   t.end();
 
